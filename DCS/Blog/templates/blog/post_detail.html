@@ -1,0 +1,41 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h3>{{ post.title }} | {{ post.created_at }}</h3><hr>
+    <p>{{ post.content }}</p>
+    <p><b>Author: {{ post.author }}</b></p>
+</div>
+
+<div class="container">
+    <h3>Comments</h3><hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn" type="submit">Comment</button>
+    </form>
+
+    {% for comment in comments %}
+        {% if comment.is_parent %}
+            <h3><b>{{ comment.author }} : </b>{{ comment.content }}</h3>
+
+            <form action="" method="post">
+                <div>
+                    {% csrf_token %}
+                    <label for="comment">Reply here</label>
+                    <input type="text" name="content">
+                    <input type="hidden" value="{{ comment.pk }}" name="parent">
+                    <input type="submit" value="Post">
+                </div>
+            </form>
+
+        {% endif %}
+        {% for replies in comment.children %}
+            <h3><b>{{ comment.author }} : </b>{{ replies.content }}</h3>
+        {% endfor %}
+    {% endfor %}
+
+</div>
+
+{% endblock content %}
